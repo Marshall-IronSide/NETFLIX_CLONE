@@ -1,7 +1,12 @@
 import React from "react";
+import Navbar from "./components/Navbar";
+import Homepage from "./pages/Homepage";
 
 const App = () => {
-  return <div className="text-3xl text-green-500">App</div>;
+  return <div >
+    <Navbar />
+    <Homepage />
+  </div>;
 };
 
 export default App;
