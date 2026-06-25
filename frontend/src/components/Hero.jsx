@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import HeroBg from "../assets/herobg2.jpg";
 import { Bookmark } from "lucide-react";
 import { Play } from "lucide-react";
+import { Link } from "react-router";
 
 const Hero = () => {
   const [movie, setMovie] = useState(null);
@@ -15,25 +16,25 @@ const Hero = () => {
   };
 
   useEffect(() => {
-      fetch("https://api.themoviedb.org/3/movie/upcoming?language=en-US&page=1",
-    options)
-    .then((res) => res.json())
-    .then((res) => {
+    fetch("https://api.themoviedb.org/3/movie/upcoming?language=en-US&page=1",
+      options)
+      .then((res) => res.json())
+      .then((res) => {
         if (res.results && res.results.length > 0) {
-            const randomIndex = Math.floor(Math.random() * res.results.length);
-            setMovie(res.results[randomIndex]);
+          const randomIndex = Math.floor(Math.random() * res.results.length);
+          setMovie(res.results[randomIndex]);
         }
-    })
-    .catch((err) => console.error(err));
-}, [])
+      })
+      .catch((err) => console.error(err));
+  }, [])
 
-if(!movie) {
+  if (!movie) {
     return <p>Loading...</p>;
-}
+  }
   return (
     <div className="text-white relative">
       <img
-        src={ `https://image.tmdb.org/t/p/original/${movie.backdrop_path}` }
+        src={`https://image.tmdb.org/t/p/original/${movie.backdrop_path}`}
         alt="bg-img"
         className="w-full rounded-2xl h-[480px] object-center object-cover"
       />
@@ -45,6 +46,7 @@ if(!movie) {
           <Bookmark className="mr-2 w-4 h-5 md:w-5 md:h-5" />
           Save for Later
         </button>
+        <Link to={`/movie/${movie.id}`}>
         <button
           className="flex justify-center items-center bg-[#e50914] hover:bg-gray-200 text-white py-3 px-4 rounded-full 
         cursor-pointer text-sm md:text-base"
@@ -52,6 +54,7 @@ if(!movie) {
           <Play className="mr-2 w-4 h-5 md:w-5 md:h-5" />
           Watch Now
         </button>
+        </Link>
       </div>
     </div>
   );

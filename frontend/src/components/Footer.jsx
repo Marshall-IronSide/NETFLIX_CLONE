@@ -22,8 +22,8 @@ const Footer = () => {
         <ul className="flex flex-col space-y-2">
           <li>Help Center</li>
           <li>Jobs</li>
-            <li>Cookie Preferences</li>
-            <li>Legal Notices</li>
+          <li>Cookie Preferences</li>
+          <li>Legal Notices</li>
         </ul>
         <ul className="flex flex-col space-y-2">
           <li>Account</li>

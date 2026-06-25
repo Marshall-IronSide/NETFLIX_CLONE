@@ -5,7 +5,7 @@ import Footer from '../components/Footer'
 
 const Homepage = () => {
   return (
-    <div className="p-5">
+    <div className="p-5  bg-[#181818]">
       <Hero/>
       <CardList title="Now playing" category="now_playing"/>
       <CardList title="Top Rated" category="top_rated"/>
