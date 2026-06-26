@@ -4,11 +4,13 @@ import { useParams } from 'react-router'
 import { useState } from 'react'
 import { Bookmark } from "lucide-react";
 import { Play } from "lucide-react";
+import { Link } from 'react-router';
 
 
 const Moviepage = () => {
     const { id } = useParams();
     const [movie, setMovie] = useState(null);
+    const [recommendations, setRecommendations] = useState([]);
     const options = {
         method: 'GET',
         headers: {
@@ -16,10 +18,17 @@ const Moviepage = () => {
             Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjMjc1ZGNjNzQ5NzZhMDRkOWU2YmY1MzM5ZTYxYzhiZSIsIm5iZiI6MTc4MjMwMjU0OS43MSwic3ViIjoiNmEzYmM3NTVkOGJjMTJmOGJjN2Y5ODkyIiwic2NvcGVzIjpbImFwaV9yZWFkIl0sInZlcnNpb24iOjF9.bOCu8TJEHrst71LB3Ek0lFHtwfGKJpXvlLsXHPaqFj4'
         }
     };
+
+
+
     useEffect(() => {
         fetch(`https://api.themoviedb.org/3/movie/${id}?language=en-US`, options)
             .then(res => res.json())
             .then(res => setMovie(res))
+            .catch(err => console.error(err));
+        fetch(`https://api.themoviedb.org/3/movie/${id}/recommendations?language=en-US&page=1`, options)
+            .then(res => res.json())
+            .then(res => setRecommendations(res.results || []))
             .catch(err => console.error(err));
     }, [id]);
 
@@ -81,50 +90,74 @@ const Moviepage = () => {
                 </div>
             </div>
             <div className='p-8'>
-                    <h2 className='text-2xl font-semibold mb-4'>Details</h2>
-                    <div className='bg-[#232323] rounded-lg shadow-lg p-6 flex flex-col md:flex-row gap-8'>
-                        <div className='flex-1'>
-                            <ul className="text-gray-300 space-y-3">
-                                <li>
-                                    <span className='font-semibold text-white'>Status: </span>
-                                    <span className='ml-2'>{movie.status}</span>
-                                </li>
-                                <li>
-                                    <span className='font-semibold text-white'>Release Date: </span>
-                                    <span className='ml-2'>{movie.release_date}</span>
-                                </li>
-                                <li>
-                                    <span className='font-semibold text-white'>Original language: </span>
-                                    <span className='ml-2'>{movie.original_language?.toUpperCase()}</span>
-                                </li>
-                                <li>
-                                    <span className='font-semibold text-white'>Budget: </span>
-                                    <span className='ml-2'>{movie.budget ? `$${movie.budget.toLocaleString()}` : 'N/A'}</span>
-                                </li>
-                                <li>
-                                    <span className='font-semibold text-white'>Revenue: </span>
-                                    <span className='ml-2'>{movie.revenue ? `$${movie.revenue.toLocaleString()}` : 'N/A'}</span>
-                                </li>
-                                <li>
-                                    <span className='font-semibold text-white'>Production Companies: </span>
-                                    <span className='ml-2'>{movie.production_companies && movie.production_companies.length > 0 ? movie.production_companies.map((c) => c.name).join(', ') : 'N/A'}</span>
-                                </li>
-                                <li>
-                                    <span className='font-semibold text-white'>Countries: </span>
-                                    <span className='ml-2'>{movie.production_countries && movie.production_countries.length > 0 ? movie.production_countries.map((c) => c.name).join(', ') : 'N/A'}</span>
-                                </li>
-                                <li>
-                                    <span className='font-semibold text-white'>Spoken Languages: </span>
-                                    <span className='ml-2'>{movie.spoken_languages && movie.spoken_languages.length > 0 ? movie.spoken_languages.map((l) => l.name).join(', ') : 'N/A'}</span>
-                                </li>
-                            </ul>
-                        </div>
-                        <div className='flex-1'>
-                            <h3>Tagline</h3>
-                            <p>{movie.tagline || "No tagline available."}</p>
-                        </div>
+                <h2 className='text-2xl font-semibold mb-4'>Details</h2>
+                <div className='bg-[#232323] rounded-lg shadow-lg p-6 flex flex-col md:flex-row gap-8'>
+                    <div className='flex-1'>
+                        <ul className="text-gray-300 space-y-3">
+                            <li>
+                                <span className='font-semibold text-white'>Status: </span>
+                                <span className='ml-2'>{movie.status}</span>
+                            </li>
+                            <li>
+                                <span className='font-semibold text-white'>Release Date: </span>
+                                <span className='ml-2'>{movie.release_date}</span>
+                            </li>
+                            <li>
+                                <span className='font-semibold text-white'>Original language: </span>
+                                <span className='ml-2'>{movie.original_language?.toUpperCase()}</span>
+                            </li>
+                            <li>
+                                <span className='font-semibold text-white'>Budget: </span>
+                                <span className='ml-2'>{movie.budget ? `$${movie.budget.toLocaleString()}` : 'N/A'}</span>
+                            </li>
+                            <li>
+                                <span className='font-semibold text-white'>Revenue: </span>
+                                <span className='ml-2'>{movie.revenue ? `$${movie.revenue.toLocaleString()}` : 'N/A'}</span>
+                            </li>
+                            <li>
+                                <span className='font-semibold text-white'>Production Companies: </span>
+                                <span className='ml-2'>{movie.production_companies && movie.production_companies.length > 0 ? movie.production_companies.map((c) => c.name).join(', ') : 'N/A'}</span>
+                            </li>
+                            <li>
+                                <span className='font-semibold text-white'>Countries: </span>
+                                <span className='ml-2'>{movie.production_countries && movie.production_countries.length > 0 ? movie.production_countries.map((c) => c.name).join(', ') : 'N/A'}</span>
+                            </li>
+                            <li>
+                                <span className='font-semibold text-white'>Spoken Languages: </span>
+                                <span className='ml-2'>{movie.spoken_languages && movie.spoken_languages.length > 0 ? movie.spoken_languages.map((l) => l.name).join(', ') : 'N/A'}</span>
+                            </li>
+                        </ul>
                     </div>
+                    <div className='flex-1'>
+                        <h3 className='font-semibold text-white mb-2'>Tagline</h3>
+                        <p className='italic text-gray-400 mb-6'>{movie.tagline || "No tagline available."}</p>
+                        <h3 className='font-semibold text-white mb-2'>
+                            Overview
+                        </h3>
+                        <p className='text-gray-200'>{movie.overview}</p>
+                    </div>
+                </div>
             </div>
+            {recommendations.length > 0 && (
+                <div className='p-8'>
+                    <h2 className='text-2xl font-semibold mb-4'>You might also like..</h2>
+                    <div className='grid grid-cols-2 md:grid-cols-5 gap-4'>
+                        {recommendations.slice(0, 10).map((rec) => (
+                            <div key={rec.id} className='bg-[#232323] rounded-lg overflow-hidden hover:scale-105 transition'>
+                                <Link to={`/movie/${rec.id}`}>
+                                    <img src={`https://image.tmdb.org/t/p/w300${rec.poster_path}`} />
+                                    <div className='p-2'>
+                                        <h3 className='text-sm font-semibold'>{rec.title}</h3>
+                                        <span className='text-xs text-gray-400'>
+                                            {rec.release_date ? rec.release_date.slice(0, 4) : 'N/A'}
+                                        </span>
+                                    </div>
+                                </Link>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
         </div>
     )
 };
