@@ -11,6 +11,7 @@ const Moviepage = () => {
     const { id } = useParams();
     const [movie, setMovie] = useState(null);
     const [recommendations, setRecommendations] = useState([]);
+    const [trailerKey, setTrailerKey] = useState(null);
     const options = {
         method: 'GET',
         headers: {
@@ -18,7 +19,6 @@ const Moviepage = () => {
             Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjMjc1ZGNjNzQ5NzZhMDRkOWU2YmY1MzM5ZTYxYzhiZSIsIm5iZiI6MTc4MjMwMjU0OS43MSwic3ViIjoiNmEzYmM3NTVkOGJjMTJmOGJjN2Y5ODkyIiwic2NvcGVzIjpbImFwaV9yZWFkIl0sInZlcnNpb24iOjF9.bOCu8TJEHrst71LB3Ek0lFHtwfGKJpXvlLsXHPaqFj4'
         }
     };
-
 
 
     useEffect(() => {
@@ -29,6 +29,13 @@ const Moviepage = () => {
         fetch(`https://api.themoviedb.org/3/movie/${id}/recommendations?language=en-US&page=1`, options)
             .then(res => res.json())
             .then(res => setRecommendations(res.results || []))
+            .catch(err => console.error(err));
+        fetch(`https://api.themoviedb.org/3/movie/${id}/videos?language=en-US`, options)
+            .then(res => res.json())
+            .then(res =>{
+                const trailer = res.results?.find(video => video.type === 'Trailer' && video.site === 'YouTube');
+                setTrailerKey(trailer?.key || null);
+            })
             .catch(err => console.error(err));
     }, [id]);
 
@@ -78,6 +85,7 @@ const Moviepage = () => {
                             ))}
                         </div>
                         <p className='max-w-2xl text-gray-200'>{movie.overview}</p>
+                        <Link to={ `https://www.youtube.com/watch?v=${trailerKey}`} target='_blank'>
                         <button
                             className="flex justify-center items-center bg-[#e50914] hover:bg-gray-200 text-white py-3 px-4 rounded-full 
                                 cursor-pointer text-sm md:text-base mt-2 md:mt-4"
@@ -85,6 +93,7 @@ const Moviepage = () => {
                             <Play className="mr-2 w-4 h-5 md:w-5 md:h-5" />
                             Watch Now
                         </button>
+                        </Link>
                     </div>
 
                 </div>
