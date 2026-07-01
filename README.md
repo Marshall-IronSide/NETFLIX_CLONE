@@ -1,16 +1,82 @@
-# React + Vite
+# Netflix Clone
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Full-stack Netflix-style demo app with a React + Vite frontend and an Express + Mongoose backend.
 
-Currently, two official plugins are available:
+**Tech stack**: React, Vite, React Router, Tailwind-style tooling, Express, Mongoose, MongoDB.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+**Contents**
+- `frontend/` — Vite + React app (UI, routes, components)
+- `backend/` — Express API and Mongoose models
 
-## React Compiler
+Getting started
+---------------
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Prerequisites
+- Node.js (v18+ recommended)
+- npm or pnpm
+- MongoDB connection string (Atlas or local)
 
-## Expanding the Oxlint configuration
+Backend setup
+1. Open a terminal and install dependencies:
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+```bash
+cd backend
+npm install
+```
+
+2. Create a `.env` file (copy from `.env.example` if present) and set at least:
+
+```
+MONGO_URI=your-mongodb-uri
+PORT=5000
+```
+
+3. Start the server:
+
+```bash
+# simple run
+node server.js
+
+# or with nodemon if installed
+npx nodemon server.js
+```
+
+Frontend setup
+1. Install dependencies and start dev server:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+2. Build for production:
+
+```bash
+npm run build
+```
+
+API examples
+- Signup (POST /api/signup):
+
+```bash
+curl -X POST http://localhost:5000/api/signup \
+	-H "Content-Type: application/json" \
+	-d '{"username":"bob","email":"bob@example.com","password":"secret"}'
+```
+
+Troubleshooting
+- If you see the error about a missing JSON body, ensure the client sends the `Content-Type: application/json` header and a valid JSON payload (Postman: Body → raw → JSON).
+- Backend logs appear in the terminal running `server.js` and will include request headers when the JSON body is missing.
+
+Repository notes
+- The backend `.env` is ignored (see `backend/.gitignore`). Add a `backend/.env.example` with placeholder keys if you want to share required env names without secrets.
+
+Contributing
+- Keep changes small and focused.
+- Run the frontend build (`frontend/npm run build`) and a quick backend syntax check when modifying the server.
+
+If you'd like, I can:
+- add a `backend/.env.example`,
+- run and verify the server + a test request from this environment, or
+- add per-field validation and clearer API error responses.
