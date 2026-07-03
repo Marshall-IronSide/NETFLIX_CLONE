@@ -1,9 +1,11 @@
 import React from "react";
 import { Search } from "lucide-react";
 import Logo from "../assets/logo.png";
-import {Link} from "react-router"
+import {Link} from "react-router";
+import { useAuthStore } from "../store/authStore";
 
 const Navbar = () => {
+    const {user} = useAuthStore();
     return (
         <nav className="bg-black text-gray-200 flex justify-between items-center p-4 h-20 text-sm md: text-[15px] front-medium text-nowrap">
             <Link to={"/"}>
@@ -26,9 +28,9 @@ const Navbar = () => {
                     <Search className="absolute right-4 top-2 w-5 h-5" />
                 </div>
                 <button className="bg-[#e50914] px-5 py-2 text-white cursor-pointer rounded-full">Get AI Movie Picks</button>
-                <Link to={"/signin"}>
+                {!user ? <Link to={"/signin"}>
                 <button className="border border-[#333333] py-2 px-4 cursor-pointer rounded-full">Sign In</button>
-                </Link>
+                </Link> : <div className="text-white">Welcome, {user.username}!</div>}
             </div>
 
         </nav>
