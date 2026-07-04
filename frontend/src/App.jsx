@@ -6,8 +6,19 @@ import { Route, Routes } from "react-router";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import { Toaster } from "react-hot-toast";
+import { useAuthStore } from "./store/authStore";
+import { useEffect } from "react";
 
 const App = () => {
+  const {fetchUser, fetchingUser} = useAuthStore();
+
+  useEffect(() => {
+    fetchUser();
+  }, [fetchUser])
+
+  if (fetchingUser) {
+    return <p>Loading...</p>
+  }
   return( <div >
     <Toaster />
     <Navbar />

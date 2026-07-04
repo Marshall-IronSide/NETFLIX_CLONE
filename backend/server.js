@@ -5,6 +5,7 @@ import User from "./models/user.model.js";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
 import cookieParser from "cookie-parser";
+import cors from "cors";
 
 dotenv.config();
 
@@ -14,6 +15,10 @@ const app = express();
 
 app.use(express.json());
 app.use(cookieParser());
+app.use(cors({
+  origin: process.env.CLIENT_URL,
+  credentials: true
+}));
 
 const PORT = process.env.PORT || 5000;
 
@@ -97,7 +102,7 @@ app.post("/api/login", async (req, res) => {
         console.error("Error during login:", error.message);
         res.status(400).json({ message: error.message });
     }
-})
+});
 
 app.get("/api/fetch-user", async (req, res) => {
     const {token} = req.cookies;
@@ -121,7 +126,12 @@ app.get("/api/fetch-user", async (req, res) => {
         console.error("Error in fetching user:", error.message);
         return res.status(400).json({ message: error.message });
     }
-})
+});
+
+app.post("/api/logout", async (req, res) => {
+    res.clearCookie("token");
+    return res.status(200).json({ message: "Logout successful!" });
+});
 
 app.listen(PORT, () => {
   connectToDB();

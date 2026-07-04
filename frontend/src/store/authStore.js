@@ -39,5 +39,15 @@ export const useAuthStore = create((set) => ({
             set({ isLoading: false, error: error.response.data.message || "Error logging in" });
             throw error;
         }
+    },
+
+    fetchUser: async () => {
+        set({ fetchinUser: true, error: null });
+        try {
+            const response = await axios.get(`${API_URL}/fetch-user`);
+            set({ user: response.data.user, fetchinUser: false });
+        } catch (error) {
+            set({ isLoading: false, error: error.response.data.message || "Error fetching user" });
+        }
     }
 }));
