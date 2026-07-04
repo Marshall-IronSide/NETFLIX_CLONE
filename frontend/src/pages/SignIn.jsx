@@ -32,8 +32,8 @@ const SignIn = () => {
                         Sign In
                     </h1>
                     <form onSubmit={handleLogin} action="" className='flex flex-col space-y-4'>
-                        <input type="text"  value={username} onChange={(e) => setUsername(e.target.value)} placeholder='username' className='w-full h-12.5 bg-white text-black rounded px-5 text-base'/>
-                        <input type="password " value={password} onChange={(e) => setPassword(e.target.value)} placeholder='password' className='w-full h-12.5 bg-white text-black rounded px-5 text-base' />
+                        <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} placeholder='username' className='w-full h-12.5 bg-white text-black rounded px-5 text-base'/>
+                        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder='password' className='w-full h-12.5 bg-white text-black rounded px-5 text-base' />
                         {error && <p className='text-red-500'>{error}</p>}
                         <button type='submit' disabled={isLoading} className='w-full bg-[#e50914] text-white py-2 rounded text-base hover:opacity-90 cursor-pointer'>
                             Sign In
