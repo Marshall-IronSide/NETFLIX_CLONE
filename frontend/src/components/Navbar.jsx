@@ -38,7 +38,9 @@ const Navbar = () => {
                     <input type="text" className="bg-[#333333] px-4 py-2 rounded-full min-w-72 pr-10 outline-none" placeholder="Search..." />
                     <Search className="absolute right-4 top-2 w-5 h-5" />
                 </div>
+                <Link to ={user? "ai-recommendations": "/signin"}>
                 <button className="bg-[#e50914] px-5 py-2 text-white cursor-pointer rounded-full">Get AI Movie Picks</button>
+                </Link>
                 {!user ? (<Link to={"/signin"}>
                     <button className="border border-[#333333] py-2 px-4 cursor-pointer rounded-full">Sign In</button>
                 </Link>) : (<div className="text-white">
