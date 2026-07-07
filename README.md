@@ -1,82 +1,93 @@
 # Netflix Clone
 
-Full-stack Netflix-style demo app with a React + Vite frontend and an Express + Mongoose backend.
+A full-stack Netflix-style demo app built with a React + Vite frontend and an Express + Mongoose backend. The app includes authentication, movie browsing pages, and AI-powered recommendations.
 
-**Tech stack**: React, Vite, React Router, Tailwind-style tooling, Express, Mongoose, MongoDB.
+## Features
+- Responsive Netflix-inspired landing experience
+- Sign up, sign in, and session-based authentication with cookies
+- Movie cards and detail pages
+- AI recommendation endpoint powered by Google Gemini
 
-**Contents**
-- `frontend/` — Vite + React app (UI, routes, components)
-- `backend/` — Express API and Mongoose models
+## Tech Stack
+- Frontend: React, Vite, React Router, Zustand, React Hot Toast
+- Backend: Express, Mongoose, JWT, bcrypt, cookie-parser, CORS
+- Database: MongoDB
 
-Getting started
----------------
+## Project Structure
+- frontend/ — Vite + React application and UI components
+- backend/ — Express API, MongoDB models, and server logic
 
-Prerequisites
-- Node.js (v18+ recommended)
-- npm or pnpm
-- MongoDB connection string (Atlas or local)
+## Prerequisites
+- Node.js 18+
+- npm
+- A MongoDB instance (local or Atlas)
 
-Backend setup
-1. Open a terminal and install dependencies:
+## Backend Setup
+1. Install dependencies:
 
 ```bash
 cd backend
 npm install
 ```
 
-2. Create a `.env` file (copy from `.env.example` if present) and set at least:
+2. Create a .env file in the backend folder with values such as:
 
-```
-MONGO_URI=your-mongodb-uri
+```env
 PORT=5000
+MONGO_URI=your-mongodb-connection-string
+JWT_SECRET=your-jwt-secret
+CLIENT_URL=http://localhost:5173
+GOOGLE_GENAI_API_KEY=your-google-api-key
 ```
 
-3. Start the server:
+3. Start the backend:
 
 ```bash
-# simple run
-node server.js
-
-# or with nodemon if installed
-npx nodemon server.js
+npm run dev
 ```
 
-Frontend setup
-1. Install dependencies and start dev server:
+## Frontend Setup
+1. Install dependencies:
 
 ```bash
 cd frontend
 npm install
+```
+
+2. Start the development server:
+
+```bash
 npm run dev
 ```
 
-2. Build for production:
+3. Open the app in your browser at:
+
+```text
+http://localhost:5173
+```
+
+4. Build for production:
 
 ```bash
 npm run build
 ```
 
-API examples
-- Signup (POST /api/signup):
+## API Overview
+- POST /api/signup — create a new user
+- POST /api/login — authenticate a user
+- GET /api/fetch-user — fetch the current authenticated user
+- POST /api/logout — clear the auth cookie
+- POST /api/ai/recommend — proxy an AI recommendation request
+
+Example signup request:
 
 ```bash
 curl -X POST http://localhost:5000/api/signup \
-	-H "Content-Type: application/json" \
-	-d '{"username":"bob","email":"bob@example.com","password":"secret"}'
+  -H "Content-Type: application/json" \
+  -d '{"username":"bob","email":"bob@example.com","password":"secret"}'
 ```
 
-Troubleshooting
-- If you see the error about a missing JSON body, ensure the client sends the `Content-Type: application/json` header and a valid JSON payload (Postman: Body → raw → JSON).
-- Backend logs appear in the terminal running `server.js` and will include request headers when the JSON body is missing.
-
-Repository notes
-- The backend `.env` is ignored (see `backend/.gitignore`). Add a `backend/.env.example` with placeholder keys if you want to share required env names without secrets.
-
-Contributing
-- Keep changes small and focused.
-- Run the frontend build (`frontend/npm run build`) and a quick backend syntax check when modifying the server.
-
-If you'd like, I can:
-- add a `backend/.env.example`,
-- run and verify the server + a test request from this environment, or
-- add per-field validation and clearer API error responses.
+## Notes
+- The AI recommendation endpoint is optional; it will return an error until GOOGLE_GENAI_API_KEY is configured.
+- Keep changes focused and follow the existing frontend/backend structure.
+- Run the frontend build after UI changes and verify backend startup after server changes.
