@@ -47,8 +47,12 @@ export const useAuthStore = create((set) => ({
             const response = await axios.get(`${API_URL}/fetch-user`);
             set({ user: response.data.user, fetchinUser: false });
         } catch (error) {
-            set({ fetchingUser: false, error: null, user: null });
-            throw error;
+            const status = error?.response?.status;
+            if (status === 401) {
+                set({ fetchinUser: false, error: null, user: null });
+                return;
+            }
+            set({ fetchinUser: false, error: error?.response?.data?.message || "Error fetching user", user: null });
         }
     },
 

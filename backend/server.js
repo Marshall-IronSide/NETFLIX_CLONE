@@ -6,6 +6,7 @@ import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import { GoogleGenAI } from "@google/genai";
 
 dotenv.config();
 
@@ -16,11 +17,21 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-  origin: process.env.CLIENT_URL,
-  credentials: true
+  origin: process.env.CLIENT_URL || "http://localhost:5173",
+  credentials: true,
 }));
 
 const PORT = process.env.PORT || 5000;
+
+const AI_MODEL = process.env.GOOGLE_GENAI_MODEL || "gemini-2.5-flash";
+const AI_CONFIG = { responseMimeType: "text/plain" };
+const aiClient = process.env.GOOGLE_GENAI_API_KEY
+  ? new GoogleGenAI({ apiKey: process.env.GOOGLE_GENAI_API_KEY })
+  : null;
+
+if (!process.env.GOOGLE_GENAI_API_KEY) {
+  console.warn("Warning: GOOGLE_GENAI_API_KEY is not set. /api/ai/recommend will return 500.");
+}
 
 app.get("/", (req, res) => {
   res.send("Hello World24567!");
@@ -131,6 +142,81 @@ app.get("/api/fetch-user", async (req, res) => {
 app.post("/api/logout", async (req, res) => {
     res.clearCookie("token");
     return res.status(200).json({ message: "Logout successful!" });
+});
+
+app.post("/api/ai/recommend", async (req, res) => {
+  if (!aiClient) {
+    return res.status(500).json({ error: "AI client is not configured on the server." });
+  }
+
+  const { prompt } = req.body;
+  if (!prompt) {
+    return res.status(400).json({ error: "Missing prompt in request body." });
+  }
+
+  try {
+    console.log("/api/ai/recommend prompt:", (prompt || '').substring(0, 200));
+    const response = await aiClient.models.generateContent({
+      model: AI_MODEL,
+      config: AI_CONFIG,
+      contents: [{ role: "user", parts: [{ text: prompt }] }],
+    });
+
+    // Log a compact shape for debugging
+    try {
+      console.dir(response, { depth: 3 });
+    } catch (e) {
+      console.log("AI response (unable to dir):", typeof response);
+    }
+
+    // Try multiple common response shapes to extract text
+    const extractText = (resp) => {
+      if (!resp) return null;
+      const paths = [
+        () => resp?.candidates?.[0]?.contents?.parts?.[0]?.text,
+        () => resp?.candidates?.[0]?.content?.[0]?.text,
+        () => resp?.output?.[0]?.content?.[0]?.text,
+        () => resp?.output?.[0]?.content?.[0]?.message?.content?.[0]?.text,
+        () => resp?.result?.[0]?.content?.[0]?.text,
+        () => resp?.text,
+      ];
+
+      for (const p of paths) {
+        try {
+          const v = p();
+          if (v && typeof v === "string" && v.trim().length > 0) return v;
+        } catch (e) {
+          // ignore
+        }
+      }
+
+      // last resort: inspect candidates for any string-ish fields
+      if (Array.isArray(resp?.candidates)) {
+        for (const c of resp.candidates) {
+          for (const key of Object.keys(c || {})) {
+            const val = c[key];
+            if (typeof val === "string" && val.trim()) return val;
+            if (Array.isArray(val)) {
+              for (const item of val) {
+                if (typeof item === "string" && item.trim()) return item;
+                if (item?.text && typeof item.text === "string" && item.text.trim()) return item.text;
+              }
+            }
+          }
+        }
+      }
+
+      return null;
+    };
+
+    const text = extractText(response) || null;
+    console.log("AI extracted text length:", (text || "").length);
+
+    return res.status(200).json({ text });
+  } catch (error) {
+    console.error("AI proxy error:", error);
+    return res.status(500).json({ error: "AI request failed.", detail: error?.message || "Unknown error" });
+  }
 });
 
 app.listen(PORT, () => {
